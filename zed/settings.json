@@ -1,0 +1,137 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "colorize_brackets": false,
+  "lsp_document_colors": "inlay",
+  "code_lens": "off",
+  "format_on_save": "on",
+  "indent_guides": {
+    "background_coloring": "disabled",
+    "coloring": "fixed"
+  },
+  "minimap": {
+    "max_width_columns": 60,
+    "thumb_border": "left_open",
+    "thumb": "always",
+    "show": "auto"
+  },
+  "gutter": {
+    "line_numbers": true
+  },
+  "hover_popover_delay": 200,
+  "auto_signature_help": true,
+  "sticky_scroll": {
+    "enabled": true
+  },
+  "autoscroll_on_clicks": true,
+  "mouse_wheel_zoom": false,
+  "vertical_scroll_margin": 3.0,
+  "vim_mode": false,
+  "which_key": {
+    "delay_ms": 1000,
+    "enabled": true
+  },
+  "buffer_line_height": "comfortable",
+  "icon_theme": "Zed (Default)",
+  "rounded_selection": false,
+  "current_line_highlight": "all",
+  "unnecessary_code_fade": 0.4,
+  "cursor_shape": "block",
+  "ui_font_weight": 500.0,
+  "edit_predictions": {
+    "mode": "subtle",
+  },
+  "cli_default_open_behavior": "new_window",
+  "outline_panel": {},
+  "collaboration_panel": {},
+  "agent": {
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": [],
+  },
+  "git_panel": {
+    "dock": "left",
+    "button": true,
+  },
+  "tabs": {
+    "git_status": true,
+  },
+  "title_bar": {
+    "show_branch_status_icon": false,
+  },
+  "git": {
+    "hunk_style": "unstaged_hollow",
+    "inline_blame": {
+      "show_commit_summary": true,
+    },
+  },
+  "project_panel": {
+    "git_status_indicator": true,
+    "dock": "left",
+  },
+  "buffer_font_family": ".ZedMono",
+  "ui_font_family": ".SystemUIFont",
+  "buffer_font_weight": 400.0,
+  "use_system_window_tabs": true,
+  "focus_follows_mouse": {
+    "enabled": true,
+  },
+  "bottom_dock_layout": "contained",
+  "session": {
+    "trust_all_worktrees": true,
+  },
+  "base_keymap": "VSCode",
+  "show_edit_predictions": true,
+  "agent_servers": {
+    "github-copilot-cli": {
+      "type": "registry",
+    },
+    "claude-acp": {
+      "type": "registry",
+    },
+  },
+  "ui_font_size": 16.0,
+  "buffer_font_size": 15,
+  "theme": {
+    "mode": "system",
+    "light": "Gruvbox Light Hard",
+    "dark": "Gruvbox Dark Hard",
+  },
+  "languages": {
+    "Java": {
+      "format_on_save": "off",
+    },
+    "JSON": {
+      "language_servers": ["!biome"],
+    },
+  },
+  "remove_trailing_whitespace_on_save": false,
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always"
+          }
+        },
+        "javascript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always"
+          }
+        }
+      },
+      "enable_lsp_tasks": true
+    },
+    "jdtls": {
+      "settings": {
+        "java_home": "/opt/homebrew/opt/openjdk@21",
+      },
+    },
+  },
+}
