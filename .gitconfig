@@ -1,0 +1,35 @@
+[user]
+	name = mikais13
+	email = mikai.somerville@gmail.com
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[alias]
+	ac = commit -a
+	acm = commit -a -m
+	cm = commit -m
+	unadd = restore --staged
+	log-o = log --oneline
+	log-g = log --graph
+	log-a = log --all
+	log-og = log --oneline --graph
+	log-oa = log --oneline --all
+	log-ga = log --graph --all
+	log-oga = log --oneline --graph --all
+	s = status
+[init]
+	defaultBranch = main
+[core]
+	editor = vim
+[rerere]
+	enabled = true
+[filter "nbstripout"]
+	clean = \"/Users/mikaisomerville/.pyenv/versions/3.9.6/bin/python3.9\" -m nbstripout
+	smudge = cat
+	required = true
+[diff "ipynb"]
+	textconv = \"/Users/mikaisomerville/.pyenv/versions/3.9.6/bin/python3.9\" -m nbstripout -t
+[pull]
+	rebase = false
