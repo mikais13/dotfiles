@@ -241,7 +241,7 @@ run = 'move-node-to-workspace Z'
 
 [[on-window-detected]]
 if.app-id = 'com.mitchellh.ghostty'
-run = 'move-node-to-workspace T'
+run = 'move-node-to-workspace X'
 
 [[on-window-detected]]
 if.app-id = 'com.hnc.Discord'
