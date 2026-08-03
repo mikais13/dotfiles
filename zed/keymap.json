@@ -18,4 +18,10 @@
       // "j k": "vim::NormalBefore"
     },
   },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-space": "editor::ShowCompletions"
+    },
+  },
 ]
