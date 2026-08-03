@@ -259,6 +259,14 @@ run = 'move-node-to-workspace C'
 if.app-id = 'com.anthropic.claudefordesktop'
 run = 'move-node-to-workspace A'
 
+[[on-window-detected]]
+if.app-id = 'com.apple.iCal'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'com.apple.finder'
+run = 'layout floating'
+
 [workspace-to-monitor-force-assignment]
     C = 'built-in'
     D = 'built-in'
