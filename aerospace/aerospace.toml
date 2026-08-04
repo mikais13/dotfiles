@@ -260,6 +260,10 @@ if.app-id = 'com.anthropic.claudefordesktop'
 run = 'move-node-to-workspace A'
 
 [[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
 if.app-id = 'com.apple.iCal'
 run = 'layout floating'
 
