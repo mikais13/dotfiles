@@ -23,6 +23,7 @@
 	defaultBranch = main
 [core]
 	editor = nvim
+	pager = less -FRX
 [rerere]
 	enabled = true
 [filter "nbstripout"]
