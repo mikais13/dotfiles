@@ -24,6 +24,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 # aliases
 alias cc="claude"
 alias cc-dsp="claude --dangerously-skip-permissions"
+alias v="nvim"
 
 # conda
 # >>> conda initialize >>>

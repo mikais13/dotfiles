@@ -22,7 +22,7 @@
 [init]
 	defaultBranch = main
 [core]
-	editor = vim
+	editor = nvim
 [rerere]
 	enabled = true
 [filter "nbstripout"]
