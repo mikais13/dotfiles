@@ -20,7 +20,11 @@ require("lazy").setup({
 	spec = {
 		{ import = "plugins" },
 	},
-	install = { colorscheme = { "retrobox" } },
+	install = { colorscheme = { "gruvbox" } },
 	checker = { enabled = true },
 	change_detection = { notify = false },
 })
+
+-- Themery block
+vim.cmd.colorscheme("gruvbox")
+-- end Themery block

@@ -25,6 +25,8 @@ command = zsh -l -c "tmux a -t default || tmux new -s default; exec zsh -l"
 
 font-family = Lilex Nerd Font Mono
 
+theme = Gruvbox Dark Hard
+
 # Config syntax crash course
 # ==========================
 # # The config file consists of simple key-value pairs,
