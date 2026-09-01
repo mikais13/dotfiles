@@ -77,3 +77,5 @@ export PATH="$JAVA_HOME/bin:$PATH"
 # terraform
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
