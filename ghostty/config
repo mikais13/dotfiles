@@ -23,7 +23,7 @@
 
 command = zsh -l -c "tmux a -t default || tmux new -s default; exec zsh -l"
 
-font-family = Iosevka
+font-family = Lilex Nerd Font Mono
 
 # Config syntax crash course
 # ==========================

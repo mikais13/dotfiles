@@ -46,7 +46,7 @@
   "current_line_highlight": "all",
   "unnecessary_code_fade": 0.4,
   "cursor_shape": "block",
-  "ui_font_weight": 500.0,
+  "ui_font_weight": 450.0,
   "edit_predictions": {
     "mode": "subtle",
   },
@@ -78,8 +78,8 @@
     "git_status_indicator": true,
     "dock": "left",
   },
-  "buffer_font_family": ".ZedMono",
-  "ui_font_family": ".SystemUIFont",
+  "buffer_font_family": "Lilex Nerd Font Mono",
+  "ui_font_family": "Lilex Nerd Font Mono",
   "buffer_font_weight": 400.0,
   "use_system_window_tabs": true,
   "focus_follows_mouse": {
