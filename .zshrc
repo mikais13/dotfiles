@@ -19,6 +19,7 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
 [[ -f /opt/homebrew/opt/fzf/shell/completion.zsh ]] && source /opt/homebrew/opt/fzf/shell/completion.zsh
 [[ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]] && source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+[[ -f ~/dotfiles/tmux/scripts/fzf-theme.sh ]] && source ~/dotfiles/tmux/scripts/fzf-theme.sh
 
 # aliases
 alias cc="claude"

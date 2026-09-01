@@ -9,6 +9,8 @@ IGNORE='node_modules|dist|build|out|target|.next|.nuxt|.cache|public|cache|paste
 
 self=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")
 
+source "$(dirname "$self")/fzf-theme.sh"
+
 # tmux session name for a directory: the leaf, plus "__<parent>" when the
 # dir isn't directly under $HOME, so ~/a/api and ~/b/api don't collide.
 session_name() {
