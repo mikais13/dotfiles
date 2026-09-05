@@ -11,7 +11,7 @@ source /opt/homebrew/opt/powerlevel10k/share/powerlevel10k/powerlevel10k.zsh-the
 # oh-my-zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME=""  # powerlevel10k sourced manually above instead
-plugins=(zsh-autosuggestions zsh-completions)
+plugins=(zsh-autosuggestions zsh-completions zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
 zstyle ':completion:*' menu select
