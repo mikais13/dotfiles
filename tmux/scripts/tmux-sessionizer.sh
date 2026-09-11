@@ -60,14 +60,14 @@ list_rows() {
                 prune+=(-name "$entry")
             done
             # Explicit hidden roots are included; costly generated dirs are pruned.
-            for root in "$HOME/localdocs" "$HOME/Documents" "$HOME/dotfiles" "$HOME/.claude" "$HOME/.agents"; do
+            for root in "$HOME/localdocs" "$HOME/Documents" "$HOME/dotfiles" "$HOME/ai-dotfiles" "$HOME/.claude" "$HOME/.agents"; do
                 [[ -d $root ]] || continue
                 while IFS= read -r dir; do
                     dir_row "${dir##*/}" "$dir"
                 done < <(find -H "$root" -type d \( "${prune[@]}" \) -prune -o -type d -print 2>/dev/null)
             done
         else
-            for dir in "$HOME" "$HOME/Documents" "$HOME/dotfiles" "$HOME/.claude" "$HOME/.agents" "$HOME"/localdocs/*/; do
+            for dir in "$HOME" "$HOME/Documents" "$HOME/dotfiles" "$HOME/ai-dotfiles" "$HOME/.claude" "$HOME/.agents" "$HOME"/localdocs/*/; do
                 dir=${dir%/}
                 [[ -d $dir ]] && dir_row "${dir##*/}" "$dir"
             done
