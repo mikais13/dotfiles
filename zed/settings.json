@@ -7,6 +7,8 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "diff_view_style": "split",
+  "relative_line_numbers": "enabled",
   "vim": {
     "toggle_relative_line_numbers": true
   },
@@ -22,12 +24,12 @@
     "max_width_columns": 60,
     "thumb_border": "left_open",
     "thumb": "always",
-    "show": "auto"
+    "show": "never"
   },
   "gutter": {
     "line_numbers": true
   },
-  "hover_popover_delay": 200,
+  "hover_popover_delay": 300,
   "auto_signature_help": true,
   "sticky_scroll": {
     "enabled": true
@@ -35,7 +37,7 @@
   "autoscroll_on_clicks": true,
   "mouse_wheel_zoom": false,
   "vertical_scroll_margin": 3.0,
-  "vim_mode": false,
+  "vim_mode": true,
   "which_key": {
     "delay_ms": 1000,
     "enabled": true
