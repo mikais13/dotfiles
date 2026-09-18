@@ -19,6 +19,7 @@
 	log-ga = log --graph --all
 	log-oga = log --oneline --graph --all
 	s = status
+	sw = switch
 [init]
 	defaultBranch = main
 [core]
