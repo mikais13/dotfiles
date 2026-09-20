@@ -24,7 +24,15 @@
 	defaultBranch = main
 [core]
 	editor = nvim
-	pager = less -FRX
+	pager = delta
+[interactive]
+	difffilter = delta --color-only
+[diff]
+	algorithm = histogram
+	colorMoved = default
+	mnemonicPrefix = true
+[merge]
+	conflictStyle = zdiff3
 [rerere]
 	enabled = true
 [filter "nbstripout"]
