@@ -1,0 +1,2 @@
+# Vim writes netrw history into its config folder, which is a link into this repo.
+.config/vim/.netrwhist

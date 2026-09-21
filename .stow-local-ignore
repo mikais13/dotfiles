@@ -1,0 +1,11 @@
+# Files in the repo that stow must not link into $HOME.
+# This list replaces stow's defaults, so keep the VCS entries.
+\.git
+\.gitignore
+\.gitmodules
+\.stow-local-ignore
+\.DS_Store
+^/README.*
+^/LICENSE.*
+^/Brewfile
+^/macos

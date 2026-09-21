@@ -124,7 +124,7 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 # fzf: `fzf --zsh` emits both the completion and key-binding integrations,
 # so neither shell/ file needs a separate source. It runs after oh-my-zsh so
 # that it detects fzf-tab on Tab and keeps it as the fallback completer.
-[[ -f ~/dotfiles/tmux/scripts/fzf-theme.sh ]] && source ~/dotfiles/tmux/scripts/fzf-theme.sh
+[[ -f ~/.config/tmux/scripts/fzf-theme.sh ]] && source ~/.config/tmux/scripts/fzf-theme.sh
 eval "$(fzf --zsh)"
 
 # zoxide, replacing cd
