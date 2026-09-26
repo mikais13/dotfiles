@@ -43,3 +43,5 @@
 	textconv = \"/Users/mikaisomerville/.pyenv/versions/3.9.6/bin/python3.9\" -m nbstripout -t
 [pull]
 	rebase = false
+[push]
+	autoSetupRemote = true
