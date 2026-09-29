@@ -13,10 +13,12 @@ source /opt/homebrew/opt/powerlevel10k/share/powerlevel10k/powerlevel10k.zsh-the
 # Plugins: oh-my-zsh
 # Plugins live in ~/.oh-my-zsh/custom/plugins as git clones.
 # Order matters: fzf-tab must load before the plugins that wrap ZLE widgets
-# (zsh-autosuggestions, zsh-syntax-highlighting).
+# (deja, zsh-syntax-highlighting).
+export DEJA_CYCLE_KEY=^O
+export DEJA_TOGGLE_EMPTY_KEY=
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME=""  # powerlevel10k is sourced manually above instead
-plugins=(fzf-tab zsh-autosuggestions zsh-completions zsh-syntax-highlighting)
+plugins=(fzf-tab deja zsh-completions zsh-syntax-highlighting)
 source $ZSH/oh-my-zsh.sh
 
 # Completion
