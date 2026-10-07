@@ -122,6 +122,9 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 # libpq
 export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 
+# opencode
+export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1
+
 # Shell integrations
 # fzf: `fzf --zsh` emits both the completion and key-binding integrations,
 # so neither shell/ file needs a separate source. It runs after oh-my-zsh so
