@@ -24,7 +24,7 @@ source $ZSH/oh-my-zsh.sh
 # Completion
 # Case-insensitive matching and colours for the completion list.
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
-zstyle ':completion:*' list-colours "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # fzf-tab replaces zsh's built-in menu, so that menu must stay off.
 zstyle ':completion:*' menu no
