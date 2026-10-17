@@ -50,6 +50,7 @@ bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 
 # Aliases
+alias g="git"
 alias cc="claude"
 alias cc-dsp="claude --dangerously-skip-permissions"
 alias oc="opencode"
