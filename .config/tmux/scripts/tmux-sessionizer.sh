@@ -16,7 +16,9 @@ session_name() {
         leaf="$(basename "$(dirname "$common")")/$leaf"
     else
         parent=$(dirname "$dir")
-        [[ $parent != "$HOME" ]] && leaf="${leaf}__$(basename "$parent")"
+        # Add the parent only when another session already has the leaf name.
+        [[ $parent != "$HOME" ]] && tmux has-session -t "=${leaf//[.: ]/_}" 2>/dev/null &&
+            leaf="${leaf}__$(basename "$parent")"
     fi
     printf '%s' "${leaf//[.: ]/_}"
 }
