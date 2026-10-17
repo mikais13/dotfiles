@@ -22,8 +22,9 @@ Usage: wk <command> [args]
                        Uses the local or origin branch if it exists, or
                        creates it from [base] (default: origin/HEAD).
   open                 Pick a worktree of this repo and open it in tmux.
-  rm [dir]             Remove a clean worktree (default: the current one),
-                       its tmux session and its zoxide entry.
+  rm [-f] [dir]        Remove a worktree (default: the current one), its
+                       tmux session and its zoxide entry. -f also removes
+                       a dirty worktree and loses its uncommitted changes.
   gc                   Prune stale worktrees, kill sessions whose folder is
                        gone and drop missing zoxide paths.
   ls                   List the worktrees of this repo (default command).
@@ -57,12 +58,18 @@ wk() {
     open)
       "$WK_TMUX_SCRIPTS/tmux-worktree.sh" ;;
     rm)
-      local dir main id ids
-      dir=$(command git -C "${1:-.}" rev-parse --show-toplevel) || return
+      local dir main id ids force arg target
+      for arg; do
+        case $arg in
+          -f|--force) force=--force ;;
+          *) target=$arg ;;
+        esac
+      done
+      dir=$(command git -C "${target:-.}" rev-parse --show-toplevel) || return
       main=$(_wk_main "$dir") || return
       [[ $dir == "$main" ]] && { echo "wk: will not remove the main worktree: $dir" >&2; return 1 }
       [[ $PWD/ == "$dir"/* ]] && cd "$main"
-      command git -C "$main" worktree remove "$dir" || return
+      command git -C "$main" worktree remove $force "$dir" || return
       zoxide remove "$dir" 2>/dev/null
       # Kill sessions last: one of them can be the session this shell runs in.
       ids=($(_wk_session_ids "$dir"))
