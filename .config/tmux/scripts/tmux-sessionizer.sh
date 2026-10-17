@@ -8,10 +8,16 @@ self=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}
 source "$(dirname "$self")/fzf-theme.sh"
 
 session_name() {
-    local dir=${1%/} leaf parent
+    local dir=${1%/} leaf parent common
     leaf=$(basename "$dir")
-    parent=$(dirname "$dir")
-    [[ $parent != "$HOME" ]] && leaf="${leaf}__$(basename "$parent")"
+    common=$(git -C "$dir" rev-parse --path-format=absolute --git-common-dir 2>/dev/null)
+    # A linked worktree has its own git dir: name it <repo>/<worktree>.
+    if [[ -n $common && $(git -C "$dir" rev-parse --path-format=absolute --git-dir) != "$common" ]]; then
+        leaf="$(basename "$(dirname "$common")")/$leaf"
+    else
+        parent=$(dirname "$dir")
+        [[ $parent != "$HOME" ]] && leaf="${leaf}__$(basename "$parent")"
+    fi
     printf '%s' "${leaf//[.: ]/_}"
 }
 
@@ -67,7 +73,7 @@ list_rows() {
                 done < <(find -H "$root" -type d \( "${prune[@]}" \) -prune -o -type d -print 2>/dev/null)
             done
         else
-            for dir in "$HOME" "$HOME/Documents" "$HOME/dotfiles" "$HOME/ai-dotfiles" "$HOME/.claude" "$HOME/.agents" "$HOME"/localdocs/*/; do
+            for dir in "$HOME" "$HOME/Documents" "$HOME/dotfiles" "$HOME/ai-dotfiles" "$HOME/.claude" "$HOME/.agents" "$HOME"/localdocs/*/ "$HOME"/localdocs/worktrees/*/*/; do
                 dir=${dir%/}
                 [[ -d $dir ]] && dir_row "${dir##*/}" "$dir"
             done
