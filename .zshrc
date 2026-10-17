@@ -135,3 +135,6 @@ eval "$(fzf --zsh)"
 
 # zoxide, replacing cd
 eval "$(zoxide init --cmd cd zsh)"
+
+# Worktrees: `wk` creates, opens and removes worktrees with tmux sessions.
+[[ -f ~/.config/zsh/worktree.zsh ]] && source ~/.config/zsh/worktree.zsh

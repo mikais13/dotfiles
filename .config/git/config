@@ -45,3 +45,7 @@
 	rebase = false
 [push]
 	autoSetupRemote = true
+[fetch]
+	prune = true
+[worktree]
+	guessRemote = true
