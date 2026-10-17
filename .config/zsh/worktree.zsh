@@ -38,8 +38,8 @@ Usage: wk <command> [args]
                        creates it from [base] (default: origin/HEAD).
   open                 Pick a worktree of this repo and open it in tmux.
   rm [-f] [dir]        Remove a worktree, its tmux session and its zoxide
-                       entry. With no dir, pick one with fzf. -f also
-                       removes a dirty worktree and loses its changes.
+                       entry. With no dir, pick one with fzf. Asks before
+                       it removes a dirty worktree; -f does not ask.
   gc                   Prune stale worktrees, kill sessions whose folder is
                        gone and drop missing zoxide paths.
   ls                   List the worktrees of this repo (default command).
@@ -86,6 +86,13 @@ wk() {
       dir=$(command git -C "$target" rev-parse --show-toplevel) || return
       main=$(_wk_main "$dir") || return
       [[ $dir == "$main" ]] && { echo "wk: will not remove the main worktree: $dir" >&2; return 1 }
+      if [[ -z $force && -n $(command git -C "$dir" status --porcelain) ]]; then
+        echo "wk: $dir has uncommitted or untracked changes:" >&2
+        command git -C "$dir" status --short >&2
+        read -q "?Remove it and lose these changes? [y/N] " || { echo; return 1 }
+        echo
+        force=--force
+      fi
       command git -C "$main" worktree remove $force "$dir" || return
       # Leave only after the remove succeeds, so a failure keeps this shell in place.
       [[ $PWD/ == "$dir"/* ]] && cd "$main"
