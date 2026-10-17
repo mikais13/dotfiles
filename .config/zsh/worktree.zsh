@@ -86,8 +86,9 @@ wk() {
       dir=$(command git -C "$target" rev-parse --show-toplevel) || return
       main=$(_wk_main "$dir") || return
       [[ $dir == "$main" ]] && { echo "wk: will not remove the main worktree: $dir" >&2; return 1 }
-      [[ $PWD/ == "$dir"/* ]] && cd "$main"
       command git -C "$main" worktree remove $force "$dir" || return
+      # Leave only after the remove succeeds, so a failure keeps this shell in place.
+      [[ $PWD/ == "$dir"/* ]] && cd "$main"
       zoxide remove "$dir" 2>/dev/null
       # Kill sessions last: one of them can be the session this shell runs in.
       ids=($(_wk_session_ids "$dir"))
