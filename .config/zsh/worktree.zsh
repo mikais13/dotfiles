@@ -14,6 +14,21 @@ _wk_session_ids() {
     awk -F'\t' -v p="$1" '$2 == p { print $1 }'
 }
 
+# Pick a linked worktree of this repo with fzf. The pointer starts on the
+# current worktree, unless that is the main one.
+_wk_pick_linked() {
+  local current pos
+  local -a linked opts
+  current=$(command git rev-parse --show-toplevel) || return
+  linked=(${(f)"$(command git worktree list --porcelain | awk '/^worktree / { print substr($0, 10) }' | tail -n +2)"})
+  (( $#linked )) || { echo "wk: no linked worktrees in this repo" >&2; return 1 }
+  pos=${linked[(Ie)$current]}
+  (( pos )) && opts=(--bind="load:pos($pos)")
+  print -l -- $linked |
+    fzf --reverse --prompt='Remove: ' $opts \
+        --preview 'git -C {} status --short; echo; git -C {} log --oneline --color=always -15'
+}
+
 _wk_help() {
   cat <<'EOF'
 Usage: wk <command> [args]
@@ -22,9 +37,9 @@ Usage: wk <command> [args]
                        Uses the local or origin branch if it exists, or
                        creates it from [base] (default: origin/HEAD).
   open                 Pick a worktree of this repo and open it in tmux.
-  rm [-f] [dir]        Remove a worktree (default: the current one), its
-                       tmux session and its zoxide entry. -f also removes
-                       a dirty worktree and loses its uncommitted changes.
+  rm [-f] [dir]        Remove a worktree, its tmux session and its zoxide
+                       entry. With no dir, pick one with fzf. -f also
+                       removes a dirty worktree and loses its changes.
   gc                   Prune stale worktrees, kill sessions whose folder is
                        gone and drop missing zoxide paths.
   ls                   List the worktrees of this repo (default command).
@@ -65,7 +80,10 @@ wk() {
           *) target=$arg ;;
         esac
       done
-      dir=$(command git -C "${target:-.}" rev-parse --show-toplevel) || return
+      if [[ -z $target ]]; then
+        target=$(_wk_pick_linked) || return
+      fi
+      dir=$(command git -C "$target" rev-parse --show-toplevel) || return
       main=$(_wk_main "$dir") || return
       [[ $dir == "$main" ]] && { echo "wk: will not remove the main worktree: $dir" >&2; return 1 }
       [[ $PWD/ == "$dir"/* ]] && cd "$main"
