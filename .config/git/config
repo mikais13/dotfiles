@@ -18,7 +18,7 @@
 	log-oa = log --oneline --all
 	log-ga = log --graph --all
 	log-oga = log --oneline --graph --all
-	s = status
+	st = status
 	sw = switch
 [init]
 	defaultBranch = main
