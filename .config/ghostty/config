@@ -27,6 +27,9 @@ font-family = Lilex Nerd Font Mono
 
 theme = Gruvbox Dark Hard
 
+# cmd+left sends ctrl+a by default, which is the tmux prefix. Send Home instead.
+keybind = cmd+left=text:\x1b[H
+
 # Config syntax crash course
 # ==========================
 # # The config file consists of simple key-value pairs,
