@@ -2,17 +2,42 @@
 # Compact git status with diff sizes. Run as `git s`.
 set -euo pipefail
 
-git rev-parse --is-inside-work-tree >/dev/null
+# Branch diff: commits since the nearest branch tip in HEAD's history, so
+# stacked branches compare against their parent. Fall back to the merge-base
+# with origin/HEAD when no branch tip is an ancestor (e.g. the base moved on).
+branch_diff() {
+  local current default fork= parent=
+  # One call for both names. Without origin/HEAD it echoes "origin/HEAD" back.
+  { read -r current; read -r default; } < <(git rev-parse --abbrev-ref HEAD origin/HEAD 2>/dev/null)
+  case $current in main | master | HEAD | "") return 0 ;; esac
+  [[ $default != origin/HEAD ]] || default=main
+  read -r fork parent < <(
+    git log --first-parent --simplify-by-decoration --format='%H %D' \
+      --decorate-refs=refs/heads --decorate-refs="refs/remotes/$default" HEAD~1 2>/dev/null |
+      awk 'NF > 1 { sub(/,$/, "", $2); print $1, $2; exit }'
+  ) || true
+  if [[ -z $fork ]] && fork=$(git merge-base "$default" HEAD 2>/dev/null); then parent=$default; fi
+  [[ -n $fork ]] || return 0
+  echo "P $parent"
+  git diff "$fork" HEAD --numstat | sed 's/^/B /'
+}
 
+# Each git call costs about 10ms, so run them at the same time. Only status
+# reports errors (e.g. outside a repo); the others would repeat them.
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+git status --porcelain=v2 --branch --show-stash >"$tmp/1" &
+status=$!
+git diff --cached --numstat -z 2>/dev/null | tr '\0' '\n' | sed 's/^/C /' >"$tmp/2" &
+git diff --numstat -z 2>/dev/null | tr '\0' '\n' | sed 's/^/W /' >"$tmp/3" &
 # Compare against the empty tree when the repo has no commits yet.
-base=$(git rev-parse -q --verify HEAD || git hash-object -t tree /dev/null)
+{ git diff HEAD --numstat 2>/dev/null || git diff "$(git hash-object -t tree /dev/null)" --numstat 2>/dev/null; } |
+  sed 's/^/T /' >"$tmp/4" &
+branch_diff 2>/dev/null >"$tmp/5" &
+wait "$status"
+wait
 
-{
-  git status --porcelain=v2 --branch --show-stash
-  git diff --cached --numstat -z | tr '\0' '\n' | sed 's/^/C /'
-  git diff --numstat -z | tr '\0' '\n' | sed 's/^/W /'
-  git diff "$base" --numstat | sed 's/^/T /'
-} | awk '
+cat "$tmp"/[1-5] | awk '
   # Drop the first n space-separated fields; the rest is the path (may hold spaces).
   function rest(line, n,   i) {
     for (i = 0; i < n; i++) sub(/^[^ ]* /, "", line)
@@ -56,6 +81,7 @@ base=$(git rev-parse -q --verify HEAD || git hash-object -t tree /dev/null)
     if ($3 != "+0") ab = ab ">" substr($3, 2)
     if (ab != "") ab = " " ab
   }
+  /^P /                { parent = substr($0, 3) }
   /^# stash/           { stash = "  stash:" $3 }
   /^1 /                { add($2, rest($0, 8)) }
   /^2 /                { split(rest($0, 9), pp, "\t"); add($2, pp[2] " -> " pp[1]) }
@@ -73,6 +99,7 @@ base=$(git rev-parse -q --verify HEAD || git hash-object -t tree /dev/null)
   }
   /^[CW] /             { numstat(substr($0, 1, 1), substr($0, 3)) }
   /^T /                { split(substr($0, 3), f, "\t"); files++; if (f[1] != "-") { ta += f[1]; td += f[2] } }
+  /^B /                { split(substr($0, 3), f, "\t"); bfiles++; if (f[1] != "-") { ba += f[1]; bd += f[2] } }
 
   END {
     fmt = "  %s %-" w "s  %s\n"
@@ -82,5 +109,6 @@ base=$(git rev-parse -q --verify HEAD || git hash-object -t tree /dev/null)
     if (u) { header("33", "changed", u);   for (i = 1; i <= u; i++) show("W", uc[i], up[i]) }
     if (n) { header("2", "untracked", n);  for (i = 1; i <= n; i++) show("N", "?", np[i]) }
     if (!s && !u && !n && !c) print "clean"
-    else printf "\n\033[1mtotal\033[0m %d file%s  %s\n", files, (files == 1 ? "" : "s"), stat(ta, td)
+    else printf "\n\033[1mtotal\033[0m  %d file%s  %s\n", files, (files == 1 ? "" : "s"), stat(ta, td)
+    if (bfiles) printf "%s\033[1mbranch\033[0m %d file%s  %s  \033[2mvs %s\033[0m\n", (files ? "" : "\n"), bfiles, (bfiles == 1 ? "" : "s"), stat(ba, bd), parent
   }'
