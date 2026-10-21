@@ -2,24 +2,13 @@
 # Compact git status with diff sizes. Run as `git s`.
 set -euo pipefail
 
-# Branch diff: commits since the nearest branch tip in HEAD's history, so
-# stacked branches compare against their parent. Fall back to the merge-base
-# with origin/HEAD when no branch tip is an ancestor (e.g. the base moved on).
+# Diff since the merge-base of HEAD and a ref, tagged for the awk below. The
+# first line is the ref's short name. Prints nothing when the ref is missing.
 branch_diff() {
-  local current default fork= parent=
-  # One call for both names. Without origin/HEAD it echoes "origin/HEAD" back.
-  { read -r current; read -r default; } < <(git rev-parse --abbrev-ref HEAD origin/HEAD 2>/dev/null)
-  case $current in main | master | HEAD | "") return 0 ;; esac
-  [[ $default != origin/HEAD ]] || default=main
-  read -r fork parent < <(
-    git log --first-parent --simplify-by-decoration --format='%H %D' \
-      --decorate-refs=refs/heads --decorate-refs="refs/remotes/$default" HEAD~1 2>/dev/null |
-      awk 'NF > 1 { sub(/,$/, "", $2); print $1, $2; exit }'
-  ) || true
-  if [[ -z $fork ]] && fork=$(git merge-base "$default" HEAD 2>/dev/null); then parent=$default; fi
-  [[ -n $fork ]] || return 0
-  echo "P $parent"
-  git diff "$fork" HEAD --numstat | sed 's/^/B /'
+  local name
+  name=$(git rev-parse --abbrev-ref "$2" 2>/dev/null) || return 0
+  echo "R$1 $name"
+  git diff "$2...HEAD" --numstat 2>/dev/null | sed "s/^/$1 /"
 }
 
 # Each git call costs about 10ms, so run them at the same time. Only status
@@ -30,20 +19,18 @@ git status --porcelain=v2 --branch --show-stash >"$tmp/1" &
 status=$!
 git diff --cached --numstat -z 2>/dev/null | tr '\0' '\n' | sed 's/^/C /' >"$tmp/2" &
 git diff --numstat -z 2>/dev/null | tr '\0' '\n' | sed 's/^/W /' >"$tmp/3" &
-# Compare against the empty tree when the repo has no commits yet.
-{ git diff HEAD --numstat 2>/dev/null || git diff "$(git hash-object -t tree /dev/null)" --numstat 2>/dev/null; } |
-  sed 's/^/T /' >"$tmp/4" &
-branch_diff 2>/dev/null >"$tmp/5" &
+git diff HEAD --numstat 2>/dev/null | sed 's/^/T /' >"$tmp/4" &
+branch_diff U '@{upstream}' >"$tmp/5" &
+branch_diff D origin/HEAD >"$tmp/6" &
 wait "$status"
 wait
 
-cat "$tmp"/[1-5] | awk '
+cat "$tmp"/[1-6] | awk '
   # Drop the first n space-separated fields; the rest is the path (may hold spaces).
   function rest(line, n,   i) {
     for (i = 0; i < n; i++) sub(/^[^ ]* /, "", line)
     return line
   }
-  function quote(s) { gsub(/\047/, "\047\\\047\047", s); return "\047" s "\047" }
   function stat(a, d) {
     if (a == "-") return "\033[2mbin\033[0m"
     return "\033[32m+" a "\033[0m \033[31m-" d "\033[0m"
@@ -54,6 +41,12 @@ cat "$tmp"/[1-5] | awk '
     width(path)
   }
   function width(p) { if (length(p) > w) w = length(p) }
+  # Branch diff line. Print a blank line first when nothing came before it.
+  function branch(k, label) {
+    if (!bf[k]) return
+    if (!files && !gap++) print ""
+    printf "\033[1m%-8s\033[0m %d file%s  %s  \033[2mvs %s\033[0m\n", label, bf[k], (bf[k] == 1 ? "" : "s"), stat(ba[k], bd[k]), ref[k]
+  }
   function header(color, name, k) {
     printf "\033[%sm%s\033[0m - %d file%s\n", color, name, k, (k == 1 ? "" : "s")
   }
@@ -81,25 +74,18 @@ cat "$tmp"/[1-5] | awk '
     if ($3 != "+0") ab = ab ">" substr($3, 2)
     if (ab != "") ab = " " ab
   }
-  /^P /                { parent = substr($0, 3) }
+  /^R[UD] /            { ref[substr($1, 2)] = $2 }
   /^# stash/           { stash = "  stash:" $3 }
   /^1 /                { add($2, rest($0, 8)) }
   /^2 /                { split(rest($0, 9), pp, "\t"); add($2, pp[2] " -> " pp[1]) }
   /^u /                { cp[++c] = rest($0, 10); width(cp[c]) }
-  /^\? /               {
-    p = rest($0, 1); np[++n] = p; width(p)
-    if (p !~ /\/$/) {
-      cmd = "git diff --no-index --numstat -- /dev/null " quote(p)
-      if ((cmd | getline line) > 0) {
-        split(line, f, "\t"); size["N", p] = f[1] SUBSEP f[2]
-        if (f[1] != "-") { ta += f[1]; files++ }
-      }
-      close(cmd)
-    }
-  }
+  /^\? /               { np[++n] = rest($0, 1); width(np[n]) }
   /^[CW] /             { numstat(substr($0, 1, 1), substr($0, 3)) }
   /^T /                { split(substr($0, 3), f, "\t"); files++; if (f[1] != "-") { ta += f[1]; td += f[2] } }
-  /^B /                { split(substr($0, 3), f, "\t"); bfiles++; if (f[1] != "-") { ba += f[1]; bd += f[2] } }
+  /^[UD] /             {
+    k = substr($0, 1, 1); split(substr($0, 3), f, "\t"); bf[k]++
+    if (f[1] != "-") { ba[k] += f[1]; bd[k] += f[2] }
+  }
 
   END {
     fmt = "  %s %-" w "s  %s\n"
@@ -109,6 +95,7 @@ cat "$tmp"/[1-5] | awk '
     if (u) { header("33", "changed", u);   for (i = 1; i <= u; i++) show("W", uc[i], up[i]) }
     if (n) { header("2", "untracked", n);  for (i = 1; i <= n; i++) show("N", "?", np[i]) }
     if (!s && !u && !n && !c) print "clean"
-    else printf "\n\033[1mtotal\033[0m  %d file%s  %s\n", files, (files == 1 ? "" : "s"), stat(ta, td)
-    if (bfiles) printf "%s\033[1mbranch\033[0m %d file%s  %s  \033[2mvs %s\033[0m\n", (files ? "" : "\n"), bfiles, (bfiles == 1 ? "" : "s"), stat(ba, bd), parent
+    else if (files) printf "\n\033[1mtotal\033[0m  %d file%s  %s\n", files, (files == 1 ? "" : "s"), stat(ta, td)
+    branch("U", "unpushed")
+    branch("D", "branch")
   }'
