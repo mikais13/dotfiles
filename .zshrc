@@ -126,6 +126,9 @@ export PATH="/opt/homebrew/opt/libpq/bin:$PATH"
 # opencode
 export OPENCODE_DISABLE_CLAUDE_CODE_SKILLS=1
 
+# orbstack: docker, kubectl and orb on PATH.
+source ~/.orbstack/shell/init.zsh 2>/dev/null || :
+
 # Shell integrations
 # fzf: `fzf --zsh` emits both the completion and key-binding integrations,
 # so neither shell/ file needs a separate source. It runs after oh-my-zsh so
