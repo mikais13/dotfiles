@@ -24,9 +24,9 @@
 	defaultBranch = main
 [core]
 	editor = nvim
-	pager = delta
+	pager = /opt/homebrew/opt/git-delta/bin/delta
 [interactive]
-	difffilter = delta --color-only
+	difffilter = /opt/homebrew/opt/git-delta/bin/delta --color-only
 [diff]
 	algorithm = histogram
 	colorMoved = default

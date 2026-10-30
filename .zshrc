@@ -111,6 +111,8 @@ esac
 
 # homebrew
 export PATH="/opt/homebrew/bin:$PATH"
+# Delta CLI (~/.local/bin/delta) must shadow git-delta's delta
+export PATH="$HOME/.local/bin:$PATH"
 
 # java
 export JAVA_HOME=$(brew --prefix openjdk@21)
